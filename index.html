@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sea Whisper - Simple</title>
+  <meta name="description" content="Simple serverless WebRTC chat with manual offer and answer exchange." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="scene" aria-hidden="true">
+    <div class="scene-gradient"></div>
+    <div class="scene-orb orb-a"></div>
+    <div class="scene-orb orb-b"></div>
+    <div class="scene-wave wave-a"></div>
+    <div class="scene-wave wave-b"></div>
+    <div class="scene-grid"></div>
+    <div class="boat-lane">
+      <div class="boat" aria-hidden="true">
+        <span class="boat-sail"></span>
+        <span class="boat-hull"></span>
+      </div>
+    </div>
+  </div>
+  <main class="container">
+    <div class="top-head">
+      <h1>Sea Whisper</h1>
+      <label class="theme-wrap" for="themeSelect">
+        Theme
+        <select id="themeSelect">
+          <option value="ocean">Ocean</option>
+          <option value="sunset">Sunset</option>
+          <option value="mint">Mint</option>
+        </select>
+      </label>
+    </div>
+    <p class="hint">Simple peer-to-peer chat. No server, no database, no history.</p>
+
+    <section class="panel">
+      <label for="nameInput">Your name</label>
+      <input id="nameInput" type="text" maxlength="24" placeholder="Your name" />
+
+      <div class="row">
+        <button id="createModeBtn" type="button">Create Connection</button>
+        <button id="joinModeBtn" type="button">Join Connection</button>
+      </div>
+
+      <p id="status" class="status">Status: Idle</p>
+      <p id="secureNote" class="warn" hidden></p>
+    </section>
+
+    <section class="panel" id="createPanel">
+      <h2>Creator</h2>
+      <button id="makeOfferBtn" type="button">1) Generate Offer</button>
+      <label for="offerOut">Offer</label>
+      <textarea id="offerOut" rows="6" readonly placeholder="Offer appears here"></textarea>
+      <button id="copyOfferBtn" type="button">Copy Offer</button>
+
+      <label for="answerIn">2) Paste Answer</label>
+      <textarea id="answerIn" rows="6" placeholder="Paste answer from peer"></textarea>
+      <button id="applyAnswerBtn" type="button">Apply Answer</button>
+    </section>
+
+    <section class="panel" id="joinPanel" hidden>
+      <h2>Joiner</h2>
+      <label for="offerIn">1) Paste Offer</label>
+      <textarea id="offerIn" rows="6" placeholder="Paste offer from peer"></textarea>
+      <button id="makeAnswerBtn" type="button">Generate Answer</button>
+
+      <label for="answerOut">2) Share Answer</label>
+      <textarea id="answerOut" rows="6" readonly placeholder="Answer appears here"></textarea>
+      <button id="copyAnswerBtn" type="button">Copy Answer</button>
+    </section>
+
+    <section class="panel">
+      <h2>Chat</h2>
+      <div class="peer-row">
+        <p>Peer: <strong id="peerName">Not connected</strong></p>
+        <span id="presenceBadge" class="presence offline">Offline</span>
+      </div>
+      <p id="typingIndicator" class="typing" hidden>Peer is typing...</p>
+
+      <div id="messages" class="messages" aria-live="polite"></div>
+
+      <div class="row controls-row">
+        <button id="emojiToggleBtn" type="button">Emoji Picker</button>
+        <button id="startRecordBtn" type="button" disabled>Start Voice</button>
+        <button id="stopRecordBtn" type="button" disabled>Stop Voice</button>
+        <button id="sendVoiceBtn" type="button" disabled>Send Voice</button>
+      </div>
+
+      <div id="emojiPanel" class="emoji-panel" hidden>
+        <input id="emojiSearch" type="text" placeholder="Search emoji..." />
+        <div id="emojiList" class="emoji-list"></div>
+      </div>
+
+      <audio id="voicePreview" controls hidden></audio>
+
+      <form id="chatForm" class="row">
+        <input id="msgInput" type="text" maxlength="500" placeholder="Type message..." disabled />
+        <button id="sendBtn" type="submit" disabled>Send</button>
+      </form>
+
+      <div id="dropZone" class="drop-zone" tabindex="0">Drop file here or click to choose</div>
+      <div class="row file-row">
+        <input id="fileInput" type="file" disabled />
+        <button id="sendFileBtn" type="button" disabled>Send File</button>
+        <button id="retryTransferBtn" type="button" disabled>Retry Last</button>
+        <button id="cancelTransferBtn" type="button" disabled>Cancel Transfer</button>
+      </div>
+      <p id="fileStatus" class="hint tiny">No file transfer in progress.</p>
+
+      <details class="debug-panel">
+        <summary>Connection Debug</summary>
+        <div class="debug-grid">
+          <div>PeerConnection</div><div id="dbgPcState">-</div>
+          <div>ICE Connection</div><div id="dbgIceConn">-</div>
+          <div>ICE Gathering</div><div id="dbgIceGather">-</div>
+          <div>DataChannel</div><div id="dbgDcState">-</div>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <div id="letterPopup" class="letter-popup" hidden>
+    <article class="letter-card" role="status" aria-live="polite">
+      <button id="closeLetterBtn" class="letter-close" type="button" aria-label="Close letter">x</button>
+      <p class="letter-kicker">Sea Letter</p>
+      <h3>Two currents have found each other</h3>
+      <p id="letterText">Your connection is alive. Start chatting.</p>
+    </article>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
